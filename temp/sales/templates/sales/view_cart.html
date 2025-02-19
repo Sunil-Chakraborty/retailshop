@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .mobile-number {
+            font-size: 1rem;
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .product-image {
+            width: 50px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart!! 🛒</h1>
+
+    <!-- Display mobile number -->
+    <div class="mobile-number">Mobile Number: {{ mobile_number }}</div>
+
+    <a href="{% url 'sales:product_list' %}" class="btn">← Continue Shopping</a>
+
+    {% if cart %}
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in cart %}
+            <tr>
+                <!-- Display product image as a thumbnail -->
+                <td>
+                    <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="product-image">
+                </td>
+                <!-- Display product name dynamically -->
+                <td>{{ order.product.name }}</td>
+                <td>₹{{ order.product.price }}</td>
+                <td>
+                    <input type="number" name="quantity_{{ forloop.counter }}" value="{{ order.quantity }}" min="1" required style="width: 60px;">
+                    <input type="hidden" name="product_id_{{ forloop.counter }}" value="{{ order.product.id }}">
+                </td>
+                <td>₹{{ order.total_price }}</td>
+                <td>
+                    <button type="submit" name="update" value="{{ order.product.id }}" class="btn">Save</button>
+                    <a href="{% url 'sales:delete_cart_item' order.product.id %}" class="btn btn-delete">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold;">Total:</td>
+                <td>₹{{ total }}</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: #777; font-size: 1.2rem;">Your cart is empty.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h1>Order Placed Successfully!</h1>
+    <p>Thank you for your order. Below are the details of your purchase:</p>
+
+    <h3>Mobile Number: {{ mobile_number }}</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.product.name }}</td>
+                <td>₹{{ order.product.price }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>₹{{ order.total_price }}</td>
+                <td>{{ order.date|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Total Amount: ₹{{ total_amount }}</h3>
+
+    <a href="{% url 'sales:product_list' %}">Back to Product List</a>
+</body>
+</html>

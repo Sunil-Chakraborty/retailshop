@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Requisitions</title>
+</head>
+<body>
+    <h1>Pending Requisitions</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requisitions %}
+            <tr>
+                <td>{{ req.customer.name }}</td>
+                <td>{{ req.product.name }}</td>
+                <td>{{ req.quantity }}</td>
+                <td>{{ req.total_price }}</td>
+                <td>{{ "Pending" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

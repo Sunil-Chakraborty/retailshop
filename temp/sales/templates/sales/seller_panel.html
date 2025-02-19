@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller Panel</title>
+</head>
+<body>
+    <h1>Seller Panel</h1>
+    <h2>Products</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>₹{{ product.price }}</td>
+                <td>{{ product.stock }}</td>
+                <td>
+                    <form method="post" action="{% url 'sales:add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" min="1" max="{{ product.stock }}" required>
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3><a href="{% url 'view_cart' %}">View Cart</a></h3>
+</body>
+</html>

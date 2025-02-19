@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+		
+        h1 {
+            text-align: center;
+            color: #28a745;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        img {
+            width: 50px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order Confirmation</h1>
+	{% if not for_pdf %}
+		<p><a href="{% url 'sales:product_list' %}" class="btn">← Continue Shopping</a></p>
+    {% endif %}
+	
+    <div>
+	<h2>
+	{% if for_pdf %}
+		From : 
+    {% endif %}
+	Mobile Number: {{ mobile_number }} <br>
+    Name: {{ customer_name }} <br>
+    Address: {{ customer_address }}</h2></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Price(Rs./unit)</th>
+                <th>Quantity</th>
+                <th>Total(Rs.)</th>
+				<th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.product.name }}</td>
+                <td>
+                    {% if order.product.image %}
+                    <img src="{{ order.product.image.url }}" alt="Product Image">
+                    {% else %}
+                    No Image
+                    {% endif %}
+                </td>
+                <td>{{ order.product.price }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.total_price }}</td>
+				<td>{{ order.get_status_display }}</td>
+                <td>{{ order.date|date:"d-m-y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="4">Grand Total</td>
+                <td >Rs.{{ total_amount }}</td>
+				<td colspan="2"></td>
+            </tr>
+        </tfoot>
+    </table>
+	{% if not for_pdf %}
+		<a href="{% url 'sales:generate_order_pdf' %}" class="btn" target="_blank">Download PDF</a>
+
+    {% endif %}
+	
+</body>
+</html>

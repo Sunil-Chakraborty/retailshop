@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Billing List</title>
+</head>
+<body>
+    <h1>Billing List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requisitions %}
+            <tr>
+                <td>{{ req.product.name }}</td>
+                <td>{{ req.quantity }}</td>
+                <td>{{ req.product.price }}</td>
+                <td>{{ req.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Total Amount: {{ total_amount }}</h3>
+</body>
+</html>

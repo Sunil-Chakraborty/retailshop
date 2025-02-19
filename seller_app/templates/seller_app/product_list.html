@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        td img {
+            width: 50px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            border-radius: 3px;
+            color: #fff;
+        }
+
+        .btn-edit {
+            background-color: #28a745;
+        }
+
+        .btn-edit:hover {
+            background-color: #218838;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product List</h1>
+	<a href="{% url 'seller_app:dashboard' %}" class="btn-home">Dashboard</a>
+    <a href="{% url 'seller_app:product_add' %}" class="btn-add">Add New Product</a>
+    <table id="product-table" class="display responsive nowrap">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+    <script>
+        $(document).ready(function() {
+            $('#product-table').DataTable({
+                responsive: true,
+                ajax: {
+                    url: "{% url 'seller_app:product_list' %}",
+                    dataSrc: "data"
+                },
+                columns: [
+                    { data: "name" },
+                    { data: "description" },
+                    { data: "price" },
+                    { data: "stock" },
+                    { data: "category" },
+                    {
+                        data: "image_url",
+                        render: function(data) {
+                            return data 
+                                ? `<img src="${data}" alt="Product Image">` 
+                                : "No Image";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function(data) {
+                            const editUrl = "{% url 'seller_app:product_edit' pk=123 %}".replace('123', data);
+                            const deleteUrl = "{% url 'seller_app:product_delete' pk=123 %}".replace('123', data);
+
+                            return `
+                                <a href="${editUrl}" class="btn-action btn-edit">Edit</a>
+                                <button class="btn-action btn-delete" data-url="${deleteUrl}">Delete</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+
+            // Handle delete button click
+            $('#product-table').on('click', '.btn-delete', function() {
+                const deleteUrl = $(this).data('url');
+                if (confirm('Are you sure you want to delete this product?')) {
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.message);
+                                $('#product-table').DataTable().ajax.reload();
+                            } else {
+                                alert('Failed to delete the product.');
+                            }
+                        },
+                        error: function() {
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

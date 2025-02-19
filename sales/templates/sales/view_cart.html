@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .mobile-number {
+            font-size: 1rem;
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .product-image {
+            width: 50px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Cart 🛒</h1>
+
+    <!-- Display mobile number -->
+    <div class="mobile-number">Mobile Number: {{ mobile_number }}
+    
+    <p><a href="{% url 'sales:product_list' %}" class="btn">← Continue Shopping</a></p>
+    </div>
+	{% if cart %}
+    <form method="post" action="{% url 'sales:update_cart' %}">
+        {% csrf_token %}
+        <table >
+            <thead>
+                <tr>
+					<th style="width:5%;">Image</th>
+                    <th>Product</th>
+                    <th style="width:5%;">Price</th>
+                    <th style="width:10%;">Quantity</th>
+                    <th style="width:10%;">Subtotal</th>
+					<th style="width:5%;">Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                <tr>
+                    <!-- Display product image as a thumbnail -->
+                    <td><img src="{{ item.product_image_url }}" alt="{{ item.product_name }}" class="product-image" style="width: 50px; height: auto;"></td>
+                    <!-- Display product name -->
+                    <td>{{ item.product_name }}</td>
+                    <td>₹{{ item.price }}</td>
+                    <td>
+                        <input type="number" name="quantity_{{ forloop.counter }}" value="{{ item.quantity }}" min="1" required style="width: 60px;">
+                        <input type="hidden" name="product_id_{{ forloop.counter }}" value="{{ item.product_id }}">
+                    </td>
+                    <td>₹{{ item.subtotal }}</td>
+					<td>{{ item.status }}</td>					
+                    <td>
+                        <button type="submit" name="update" value="{{ item.product_id }}" class="btn">Save</button>
+                        <a href="{% url 'sales:delete_cart_item' item.product_id %}" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3">Total</td>
+					<td>{{ qty }}</td>
+                    <td>₹{{ total }}</td>
+					
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+    {% else %}
+    <p style="text-align: center; font-size: 1.2rem; color: #777;">Your cart is empty.</p>
+    {% endif %}
+	<a href="{% url 'sales:order_confirmation' %}" class="btn">Download Cart Report</a>
+	
+</body>
+</html>

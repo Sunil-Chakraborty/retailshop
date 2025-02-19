@@ -1,0 +1,12 @@
+<div>
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:200px;">
+    <h3>{{ product.name }}</h3>
+    <p>Stock: {{ product.stock }}</p>
+    <p>Price: {{ product.price }}</p>
+    <form method="post" action="{% url 'sales:add_to_cart' product.id %}">
+        {% csrf_token %}
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" min="1" max="{{ product.stock }}" required>
+        <button type="submit">Add to Cart</button>
+    </form>
+</div>

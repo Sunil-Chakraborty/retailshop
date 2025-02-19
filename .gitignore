@@ -1,0 +1,4 @@
+venv/
+on.bat
+srv.bat
+*.sqlite3

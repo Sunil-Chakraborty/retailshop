@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoppers Stop</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #6a11cb, #2575fc); /* Gradient background */
+            color: #fff; /* Text color for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: #555;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 0.9rem;
+			font-weight:bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6a11cb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2575fc;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+		.signboard {
+			background-color: #fff;
+			color: #333;
+			width: 100%;
+			max-width: 400px;
+			padding: 15px 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+    </style>
+	
+    <script>
+		async function checkCustomer() {
+			const mobileNumber = document.getElementById('mobile_number').value;
+
+			// Check if the mobile number is equal to 10 characters (basic validation)
+			if (mobileNumber.length = 10) {
+				try {
+					const response = await fetch(`/sales/check-customer/?mobile_number=${mobileNumber}`);
+					const data = await response.json();
+
+					// If the customer exists, populate the name and address fields
+					if (data.exists) {
+						document.getElementById('name').value = data.name;
+						document.getElementById('address').value = data.address;
+					} else {
+						// Clear the fields if the customer doesn't exist
+						document.getElementById('name').value = '';
+						document.getElementById('address').value = '';
+					}
+				} catch (error) {
+					console.error('Error fetching customer details:', error);
+					alert('There was an error checking the customer. Please try again.');
+				}
+			}
+		}
+	</script>
+
+</head>
+<body>
+    <div class="container">
+        
+		<div class="signboard">
+			<h1>Welcome to <br> হরহরি স্টেশনার্স  </h1>
+		</div>
+		
+        <p>Enter your mobile number to continue shopping.</p>
+        <form method="post">
+            {% csrf_token %}
+            <label for="mobile_number">Mobile Number:</label>
+            <input type="text" id="mobile_number" name="mobile_number" 
+				   placeholder="Enter your mobile number" oninput="checkCustomer()" maxlength="15" required>
+	   
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" value="{{ name }}">
+
+            <label for="address">Short Address:</label>
+            <input type="text" id="address" name="address" placeholder="Enter your short address" value="{{ address }}">
+
+            <button type="submit">Continue</button>
+        </form>
+        <div class="footer">
+            <p>Your details are safe with us.</p>
+        </div>
+    </div>
+</body>
+</html>

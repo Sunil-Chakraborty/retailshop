@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <style>
+		
+		@media (max-width: 480px) {
+			.product-grid {
+				grid-template-columns: 1fr; /* One column for mobile phones */
+			}
+		}
+		@media (max-width: 768px) {
+			.product-grid {
+				gap: 8px; /* Even smaller gap for tablets */
+			}
+		}
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5; /* Light background color */
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+			margin-top: 12px;
+            font-size: 1rem;
+			font-weight:bold;
+            color: #555;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+		.product-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr); /* Three equal-width columns */
+			gap: 5px; /* Reduced space between the cards */
+			margin-left: 2px; /* Add left margin */
+			margin-right: 2px; /* Add right margin */
+			justify-content: center; /* Center the grid within the container */
+		}
+
+		.product-card {
+			background-color: #fff;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			width: 100%; /* Ensure full width within the column */
+			padding: 5px; /* Compact padding */			
+			text-align: center;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+
+		.product-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+		}
+
+		.product-image {
+			height: 100px; /* Adjust image height for compact display */
+			object-fit: contain; /* Ensure the entire image fits */
+			border-radius: 5px; /* Smooth corners for images */
+			margin-bottom: 8px; /* Reduced spacing below image */
+		}
+        .product-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            font-size: 0.9rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .tooltip {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .no-products {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #777;
+        }
+		
+        .cart {
+            position:fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-count {
+            margin-left: 10px;
+            background-color: white;
+            color: #007bff;
+            border-radius: 50%;
+            width: 28px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+		.header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+			
+        }
+
+        .header-bar h2 {
+            flex: 1;
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-left: 20px;
+        }
+
+        .header-bar .btn-home {
+            background-color: #007bff;
+            color: white;
+			border-radius: 50%;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            display: inline-block;
+			height:55px;
+        }
+
+        .header-bar .btn-home:hover {
+            background-color: #0056b3;
+        }
+		
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <a href="{% url 'sales:ask_mobile_number' %}" class="btn-home">Home</a>
+        <a style="margin-left:5px;" href="{% url 'sales:view_cart' %}" class="btn-home">Cart 🛒
+        <div class="cart-count" id="cart-count">{{ cart_count }}</div></a>
+		<h2>Product List</h2>
+		<!-- <div class="mobile-number">Mob: {{ mobile_number }}  Name:{{customer_name}}</div> -->
+		
+    </div>
+    <!-- Dropdown for Categories -->
+    <form method="get" id="category-form">
+        <label for="category-select">Select Category:</label>
+        <select id="category-select" name="category" onchange="document.getElementById('category-form').submit()">
+            <option value="">-- All Categories --</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+
+	 
+    <!-- Product Grid -->
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card" onclick="window.location.href='{% url 'sales:place_order' product.id %}'">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-price">₹{{ product.price }}</div>
+            <div class="tooltip">
+                
+                <p>Stock: {{ product.stock }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% if products.count == 0 %}
+        <p class="no-products">No products available in this category.</p>
+        {% endif %}
+    </div>
+</body>
+
+<script>
+    function updateCartCount(count) {
+        document.getElementById('cart-count').innerText = count;
+    }
+</script>
+
+</html>
