@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable Whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -146,7 +147,9 @@ SESSION_COOKIE_AGE = 1800  # Optional: Expire after 30 minutes of inactivity
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_ROOT = BASE_DIR/'assets'
 STATICFILES_DIRS = [BASE_DIR / "static"]  # Directory for static files
+#STATICFILES_STORAGE = "whitenoise.storage.CompressdManifestStaticFilesStorage"
 
 # Media files (Uploaded files like product images)
 MEDIA_URL = '/media/'
